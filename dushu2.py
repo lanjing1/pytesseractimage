@@ -46,7 +46,7 @@ def img_sobel_binary(im, blur_sz):
         blur_gray = img_blur
 
     # 提取Sobel直角特征
-    sobelx = cv2.Sobel(blur_gray,cv2.CV_16S,1,0,ksize=1)
+    sobelx = cv2.Sobel(blur_gray, cv2.CV_16S, 1, 0, ksize=1)
     sobely = cv2.Sobel(blur_gray, cv2.CV_16S, 0, 1, ksize=1)
     abs_sobelx = np.absolute(sobelx)
     abs_sobely = np.absolute(sobely)
@@ -290,6 +290,39 @@ def img_test(im):
             cv2.waitKey(0)
 
 
+# 对图片进行裁剪、识别
+def img_detect_tesseract(im):
+
+    # 购买方名称及身份证号码/组织机构代码
+    cv2.rectangle(im, (72, 80), (247, 112), (0, 255, 0), 2)
+    cv2.imshow("购买方名称及身份证号码", im)
+
+    # 创建图像
+    #emptyImage = np.zeros((175,32), np.uint8)
+    # 扣图像
+    # box = (72, 80, 247, 112)
+    # region = im.crop(box)
+    # region.show()
+    # 保存图像
+    # cv2.imwrite("D:\\nameandid.jpg", img)
+
+    # 发动机号码
+    cv2.rectangle(im, (72, 162), (247, 185), (0, 255, 0), 2)
+    cv2.imshow("发动机号码", im)
+
+    # 车辆识别代码/车架号码
+    cv2.rectangle(im, (353, 160), (518, 183), (0, 255, 0), 2)
+    cv2.imshow("车辆识别代码/车架号码", im)
+
+    # 价税合计（小写）
+    cv2.rectangle(im, (425, 184), (466, 207), (0, 255, 0), 2)
+    cv2.imshow("价税合计", im)
+
+    print(pytesseract.image_to_string(Image.open('nameandid.png')))
+
+
+
+
 if __name__ == "__main__":
     
     print("...图片文字识别系统...")
@@ -298,15 +331,25 @@ if __name__ == "__main__":
     #F1 = "633_88.jpg"
     #F1 = "22.png"
     #F1 = "reciept.jpg"
-    F1 = "reciept11.png"
+    #F1 = "reciept11.png"
     #F1 = "lion.png"
-    
+    F1 = "receiptrect.jpg"
+
+    # 对图片进行裁剪、识别
+    #img = Image.open(F1)
+
+
     img = cv2.imread(F1)
     img_show_hook("原图", img)
+    # 改变图片的长宽比
+    img = imutils.resize(img, width=516, height=331)
+    img_detect_tesseract(img)
+
     #检测直线
     im = img_hough_lines(img)
 
-    #img = imutils.resize(img, width = 918)
+
+
     #img_show_hook("restest", img)
 
 
