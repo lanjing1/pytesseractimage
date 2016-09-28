@@ -134,16 +134,50 @@ def smooth_image():
     # high-pass filters (HPF),etc. A LPF helps in removing noise, or blurring the image.
     #  A HPF filters helps in finding edges in an image.
     img = cv2.imread("OpenCVlogo.jpg")
+    img = cv2.imread("noiseLogo.png")
     kernel = np.ones((5, 5), np.float32) / 25
     dst = cv2.filter2D(img, -1, kernel)
-    plt.subplot(121), plt.imshow(img), plt.title('Original')
-    plt.xticks([]), plt.yticks([])
-    plt.subplot(122), plt.imshow(dst), plt.title('Averaging')
-    plt.xticks([]), plt.yticks([])
-    plt.show()
+    # plt.subplot(121), plt.imshow(img), plt.title('Original')
+    # plt.xticks([]), plt.yticks([])
+    # plt.subplot(122), plt.imshow(dst), plt.title('Averaging')
+    # plt.xticks([]), plt.yticks([])
+    # plt.show()
+
+    # Image Blurring(Image Smoothing)
+    # 1.Averaging
+    blur = cv2.blur(img,(5,5))
+
+    # 2.Gaussian Filtering is highly effective in removing Gaussian noise from the image
+    gaussianBlur = cv2.GaussianBlur(img,(5,5),0)
+
+    # ???3.Median Filtering is highly effective in removing salt-and-pepper noise
+    median = cv2.medianBlur(img,5)
+
+    # 4.Biateral Filtering 双边过滤器 is highly effective at noise removal while preserving edges.
+    # But the operation is slower compared to other filters.
+    bilateralblur = cv2.bilateralFilter(img,9,75,75)
+    cv2.imshow("blur",blur)
+    cv2.waitKey(0)
+    cv2.imshow("gaussianBlur", gaussianBlur)
+    cv2.waitKey(0)
+    cv2.imshow("median", median)
+    cv2.waitKey(0)
+    cv2.imshow("bilateralblur", bilateralblur)
+    cv2.waitKey(0)
+
+    # morphological operations 形态学操作
+def morphological_tran():
+    pass
+
+
+
+
+
+
 
 if __name__ == "__main__":
     # adap_threshold()
     # ostu_binar()
     # geo_trans()
-    smooth_image()
+    # smooth_image()
+    pass
