@@ -165,12 +165,254 @@ def smooth_image():
     cv2.imshow("bilateralblur", bilateralblur)
     cv2.waitKey(0)
 
-    # morphological operations 形态学操作
+    # Morphological operations 形态学操作
+    # like Erosion,Dilation,Opening,Closing etc
 def morphological_tran():
-    pass
+    # erosion腐蚀
+    img = cv2.imread("j.png",0)
+    kernel = np.ones((8,8),np.uint8)
+    erosion = cv2.erode(img,kernel,iterations = 1)
+    #cv2.imshow("erosion", erosion)
+    #cv2.waitKey(0)
+
+    # Dilation 膨胀
+    dilation = cv2.dilate(img,kernel,iterations=1)
+    #cv2.imshow("dilation", dilation)
+    #cv2.waitKey(0)
+
+    # Opening is just another name of erosion followed by dilation.It is useful in removing noise
+    img = cv2.imread("jnoise.png", 0)
+    opening = cv2.morphologyEx(img,cv2.MORPH_OPEN,kernel)
+
+    # Closing is reverse of Opening,Dilation followed by erosion.It is useful in closing small holes inside the foreground object,or small black points on the object
+    # ???? The result will look like the outline of the object
+    img = cv2.imread("jinnerNoise.png",0)
+    closing = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+    #cv2.imshow("closing", closing)
+    #cv2.waitKey(0)
+
+    # Morphological Gradient It is the difference between dilation and erosion of an image
+    gradient = cv2.morphologyEx(img,cv2.MORPH_GRADIENT,kernel)
+
+    # ???? Top Hat It is the difference between input image and Opening of the image
+    tophat = cv2.morphologyEx(img,cv2.MORPH_TOPHAT,kernel)
+
+    # ???? Black Hat It is the difference between the closing of the input image and input image
+    blackhat = cv2.morphologyEx(img,cv2.MORPH_BLACKHAT,kernel)
+    cv2.imshow("img", img)
+    cv2.waitKey(0)
+    cv2.imshow("tophat", tophat)
+    cv2.waitKey(0)
+
+    # Structuring Element just pass the shape and size of the kernel,you get the desired kernel
+    # Rectangular Kernel
+    cv2.getStructuringElement(cv2.MORPH_RECT,(5,5))
+    # Elliptical Kernel
+    cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
+    # Cross-shaped Kernel
+    cv2.getStructuringElement(cv2.MORPH_CROSS,(5,5))
+
+    # Image Gradients
+
+    # Find Image gradients,edges etc
+def image_gradients():
+    # Sobel and Scharr Derivatives
+
+    # Laplacian Derivatives
+
+    # ??? all operator in a single diagram
+    img = cv2.imread('gezi.png', 0)
+    laplacian = cv2.Laplacian(img, cv2.CV_64F)
+    sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=5)
+    sobely = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=5)
+    # plt.subplot(2, 2, 1), plt.imshow(img, cmap='gray')
+    # plt.title('Original'), plt.xticks([]), plt.yticks([])
+    # plt.subplot(2, 2, 2), plt.imshow(laplacian, cmap='gray')
+    # plt.title('Laplacian'), plt.xticks([]), plt.yticks([])
+    # plt.subplot(2, 2, 3), plt.imshow(sobelx, cmap='gray')
+    # plt.title('Sobel X'), plt.xticks([]), plt.yticks([])
+    # plt.subplot(2, 2, 4), plt.imshow(sobely, cmap='gray')
+    # plt.title('Sobel Y'), plt.xticks([]), plt.yticks([])
+    # plt.show()
+
+    # Important matter 结果棱角模糊
+    img = cv2.imread('box.png', 0)
+    # Output dtype = cv2.CV_8U
+    sobelx8u = cv2.Sobel(img, cv2.CV_8U, 1, 0, ksize=5)
+    # Output dtype = cv2.CV_64F. Then take its absolute and convert to cv2.CV_8U
+    sobelx64f = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=5)
+    abs_sobel64f = np.absolute(sobelx64f)
+    sobel_8u = np.uint8(abs_sobel64f)
+    plt.subplot(1, 3, 1), plt.imshow(img, cmap='gray')
+    plt.title('Original'), plt.xticks([]), plt.yticks([])
+    plt.subplot(1, 3, 2), plt.imshow(sobelx8u, cmap='gray')
+    plt.title('Sobel CV_8U'), plt.xticks([]), plt.yticks([])
+    plt.subplot(1, 3, 3), plt.imshow(sobel_8u, cmap='gray')
+    plt.title('Sobel abs(CV_64F)'), plt.xticks([]), plt.yticks([])
+    plt.show()
+
+    # Concept of Canny edge detection
+def canny_edge():
+    img = cv2.imread('gezi.png', 0)
+    edges = cv2.Canny(img, 50, 100)
+    plt.subplot(121), plt.imshow(img, cmap='gray')
+    plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+    plt.subplot(122), plt.imshow(edges, cmap='gray')
+    plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+    plt.show()
+
+    # ??? 报错Image Pyramids
 
 
+if __name__ == '__main__':
+    def img_pyramids():
+        img = cv2.imread('gezi.png')
+        G = img.copy()
+        #res = cv2.resize(img,(300,300))
+        lower_reso1 = cv2.pyrDown(G)
+        higher_reso2 = cv2.pyrUp(lower_reso1)
+        # cv2.imshow("lower_reso",lower_reso1)
+        # cv2.waitKey(0)
 
+        lower_reso2 = cv2.pyrDown(lower_reso1)
+        # cv2.imshow("lower_reso2", lower_reso2)
+        # cv2.waitKey(0)
+
+        lower_reso3 = cv2.pyrDown(lower_reso2)
+        # cv2.imshow("lower_reso3", lower_reso3)
+        # cv2.waitKey(0)
+
+        lower_reso4 = cv2.pyrDown(lower_reso3)
+        # cv2.imshow("lower_reso4", lower_reso4)
+        # cv2.waitKey(0)
+
+        # Image Blending using Pyramids
+        A = cv2.imread('apple.png')
+        B = cv2.imread('orange.png')
+        # generate Gaussian pyramid for A
+        G = A.copy()
+        gpA = [G]
+        for i in xrange(6):
+            G = cv2.pyrDown(G)
+            gpA.append(G)
+
+        # generate Gaussian pyramid for B
+        G = B.copy()
+        gpB = [G]
+
+        for i in xrange(6):
+            G = cv2.pyrDown(G)
+            gpB.append(G)
+        # generate Laplacian Pyramid for A
+        lpA = [gpA[5]]
+        for i in xrange(5, 0, -1):
+            GE = cv2.pyrUp(gpA[i])
+            L = cv2.subtract(gpA[i-1], GE)
+            lpA.append(L)
+        # generate Laplacian Pyramid for B
+        lpB = [gpB[5]]
+        for i in xrange(5, 0, -1):
+            GE = cv2.pyrUp(gpB[i])
+            L = cv2.subtract(gpB[i - 1], GE)
+            lpB.append(L)
+        # Now add left and right halves of images in each level
+        LS = []
+        for la, lb in zip(lpA, lpB):
+            rows, cols, dpt = la.shape
+            ls = np.hstack((la[:, 0:cols / 2], lb[:, cols / 2:]))
+            LS.append(ls)
+        # now reconstruct
+        ls_ = LS[0]
+        for i in xrange(1, 6):
+            ls_ = cv2.pyrUp(ls_)
+            ls_ = cv2.add(ls_, LS[i])
+        # image with direct connecting each half
+        real = np.hstack((A[:, :cols / 2], B[:, cols / 2:]))
+        cv2.imwrite('Pyramid_blending2.jpg', ls_)
+        cv2.imwrite('Direct_blending.jpg', real)
+
+        # Contours in OpenCV
+        # The contours are a useful tool for shape analysis and object detection and recognition.
+        # 1 For better accuracy,use binary images.So before finding contours,apply threshold or canny edge detection
+        # 2 findContours function modifies the source image
+        # 3 In OpenCV,finding contours is like finding white object from black ground.
+
+
+def contours():
+    img = cv2.imread("j.png")
+    imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    ret, thresh = cv2.threshold(imgray, 300, 600, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # ???只保留线的end points cv2.CHAIN_APPROX_NONE
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cont_img = cv2.drawContours(img, contours, -1, (0, 255, 0), 3)
+
+    # 1.Moments help to calculate some features like center of mass of the object,area of the object etc
+    ret, thresh = cv2.threshold(imgray, 127, 255, 0)
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cnt = contours[0]
+    M = cv2.moments(cnt)
+    print M
+
+    # 2.Contour Area
+    area = cv2.contourArea(cnt)
+
+    # 3. Contour Perimeter
+    perimeter = cv2.arcLength(cnt, True)
+
+    # 4.Contour Approximation
+    epsilon = 0.1 * cv2.arcLength(cnt, True)
+    approx = cv2.approxPolyDP(cnt, epsilon, True)
+    cont_img = cv2.drawContours(img, approx, -1, (0, 255, 0), 3)
+
+    # 5.Convex Hull
+    hull = cv2.convexHull(cnt)
+    cont_img = cv2.drawContours(img, hull, -1, (0, 255, 0), 3)
+
+    # 6.Checking Convexity
+    k = cv2.isContourConvex(cnt)
+
+    # 7.Bounding Rectangle
+    # 7.a. Straight Bounding Rectangle
+    x, y, w, h = cv2.boundingRect(cnt)
+    img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    # 7.b. Rotated Rectangle
+    rect = cv2.minAreaRect(cnt)
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
+    img = cv2.drawContours(img, [box], 0, (0, 0, 255), 2)
+
+    # 8. Minimum Enclosing Circle
+    (x, y), radius = cv2.minEnclosingCircle(cnt)
+    center = (int(x), int(y))
+    radius = int(radius)
+    img = cv2.circle(img, center, radius, (0, 255, 0), 2)
+
+    # 9. Fitting an Ellipse
+    ellipse = cv2.fitEllipse(cnt)
+    img = cv2.ellipse(img, ellipse, (0, 255, 0), 2)
+
+    # 10. Fitting a Line
+    rows, cols = img.shape[:2]
+    [vx, vy, x, y] = cv2.fitLine(cnt, cv2.DIST_L2, 0, 0.01, 0.01)
+    lefty = int((-x * vy / vx) + y)
+    righty = int(((cols - x) * vy / vx) + y)
+    img = cv2.line(img, (cols - 1, righty), (0, lefty), (0, 255, 0), 2)
+    #............
+
+
+    # 直方图均值化Histograms Equalization in OpenCV.Even if the image was a darker image,
+    # 重点after equalization we will get almost the same image as we got.
+def histograms():
+    img = cv2.imread('card.jpg', 0)
+    equ = cv2.equalizeHist(img)
+    res = np.hstack((img, equ))  # stacking images side-by-side
+    cv2.imwrite('rescard.png', res)
+    cv2.imwrite('equ.png', equ)
+    img = cv2.imread('zqqtes.png', 0)
+    equ = cv2.equalizeHist(img)
+    res = np.hstack((img, equ))  # stacking images side-by-side
+    cv2.imwrite('zqqtesaa.png', equ)
+    cv2.imwrite('zqqtesaad.png', res)
 
 
 
@@ -180,4 +422,9 @@ if __name__ == "__main__":
     # ostu_binar()
     # geo_trans()
     # smooth_image()
-    pass
+    # morphological_tran()
+    # image_gradients()
+    # canny_edge()
+    # img_pyramids()
+    # contours()
+    histograms()
