@@ -414,8 +414,54 @@ def histograms():
     cv2.imwrite('zqqtesaa.png', equ)
     cv2.imwrite('zqqtesaad.png', res)
 
+    # 1.4.12 Template Matching
+    # to finds objects in an image using Template Matching
+    # 重点
+def temp_match():
+    img = cv2.imread("src/image/receipt1.jpg",0)
+    img2 = img.copy();
+    template = cv2.imread('template.png',0)
+    w,h = template.shape[::-1]
+    # all the 6 methods for comparison in a list
+    methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR','cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
+    for meth in methods:
+        img = img2.copy()
+        method = eval(meth)
 
+        # apply template matching
+        res = cv2.matchTemplate(img,template,method)
+        min_val,max_val,min_loc,max_loc = cv2.minMaxLoc(res)
 
+        # if the method is TM_SQDIFF or TM_SQDIFF_NORMED,take minimum
+        if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
+            top_left = min_loc
+        else:
+            top_left = max_loc
+        bottom_right = (top_left[0] + w, top_left[1] + h)
+
+        cv2.rectangle(img,top_left,bottom_right,(255,0,0),2)
+        # 购买方名称及身份证号码
+        cv2.rectangle(img,(top_left[0]+163,top_left[1]+176),(top_left[0]+536,top_left[1]+245),(255,0,0),2)
+        # 厂牌型号
+        cv2.rectangle(img,(top_left[0]+496,top_left[1]+247),(top_left[0]+858,top_left[1]+294),(255,0,0),2)
+        # 合格证号
+        cv2.rectangle(img,(top_left[0]+166,top_left[1]+294),(top_left[0]+403,top_left[1]+344),(255,0,0),2)
+        # 发动机号
+        cv2.rectangle(img,(top_left[0]+168,top_left[1]+346),(top_left[0]+535,top_left[1]+393),(255,0,0),2)
+        # 车辆识别代码/车架号码
+        cv2.rectangle(img, (top_left[0] + 752, top_left[1] + 345), (top_left[0] + 1094, top_left[1] + 395), (255,0,0), 2)
+        # 价税合计
+        cv2.rectangle(img, (top_left[0] + 898, top_left[1] + 394), (top_left[0] + 1049, top_left[1] + 443), (255,0,0), 2)
+
+        #cv2.rectangle(img,top_left + 163)
+        cv2.imshow('img', img)
+        cv2.waitKey(0)
+        plt.subplot(121), plt.imshow(res, cmap='gray')
+        plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
+        plt.subplot(122), plt.imshow(img, cmap='gray')
+        plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
+        plt.suptitle(meth)
+        plt.show()
 
 if __name__ == "__main__":
     # adap_threshold()
@@ -427,4 +473,5 @@ if __name__ == "__main__":
     # canny_edge()
     # img_pyramids()
     # contours()
-    histograms()
+    # histograms()
+    temp_match()
